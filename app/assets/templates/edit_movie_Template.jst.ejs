@@ -1,0 +1,32 @@
+<div id='movieForm' style='margin-left:10px;'>
+	<form name='movie' method='POST'>
+		<h1 style="font-weight: bold;">Edit Movie</h1>
+		<table>
+			<tr>
+				<td><label style="font-size: large;"><b>Title:</b></label></td>				
+			</tr>
+			<tr>
+				<td><input type='text' name='movie[title]' id='movie_title'></td>
+			</tr>
+			<tr>
+				<td><label style="font-size: large;"><b>Summary:</b></label></td>		
+			</tr>
+			<tr>
+				<td><textarea maxlength="255" name='movie[summary]' id='summary' rows="10" cols="100"></textarea></td>
+			</tr>
+			<tr>
+				<td><label style="font-size: large;"><b>Image:</b></label></td>		
+			</tr>
+			<tr>
+				<td><input type='file' name='movie[img]' id='movie_img'></td>
+			</tr>
+			<tr height="20px"><td></td></tr>
+			<tr>		
+				<td>
+					<input type="button" class="btn btn-primary" id='submit' value="Update Movie" />&nbsp;
+					<input type="button" class="btn" id='cancel' value="Cancel" />
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
