@@ -5,7 +5,6 @@ var UserMovies = Barebone.Model.extend({
 	//takes in MovieList found in movie.app.js
 	initialize : function() {
 		this.myMovieList = new MovieList();
-		this.myMovieList.event.on("change", this.render, this);
 		this.myMovieList.fetch();
 
 		var username = this.getUserName(gon.user_email);
@@ -61,16 +60,10 @@ var UserMoviesView = Barebone.View.extend({
 		
 		$(current.el).append(movieRenderString);
 
+		this.registerDomEvents();
+
 		return this;
 	},	
-
-	events: {
-		"click #updateMovieBtn" : "updateMovie"
-	},		
-
-	updateMovie: function() {
-		this.event.trigger("change_page", null, {page: "userMovies"});
-	},
 
 	events : {
 		"click #editMovie" : "editMovie",
@@ -92,6 +85,6 @@ var UserMoviesView = Barebone.View.extend({
 
 });
 
-//code here
-var userMovieView = new UserMoviesView();
-userMoviesView.setup(event: this.event);
+//code for adding into ViewController here
+this.current_view = new UserMoviesView();
+this.current_view.setup(event: this.event);
