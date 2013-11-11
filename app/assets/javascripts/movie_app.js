@@ -29,6 +29,7 @@ $(document).ready(function(){
 	var EditMovieView = Barebone.View.extend({
 
 		setup: function() {
+			this.el = "pageBody";
 			console.log("Edit Movie Setup");
 			this.render();
 			this.registerDomEvents();			
