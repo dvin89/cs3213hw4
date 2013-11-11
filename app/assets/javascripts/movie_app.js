@@ -16,8 +16,7 @@ $(document).ready(function(){
 			this.myMovieList.fetch();
 		},
 	
-		render: function(){
-			this.$el().html("");
+		render: function(){			
 			for(var i=0; i<this.myMovieList.attributes.length; i++){
 				var renderString = "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleLink' href='javascript: void(0);'><b><u>"+this.myMovieList.get("title", i)+"</u></b></a><br /><br />";
     			renderString += "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleImg' href='javascript: void(0);'><div><img src='" + this.myMovieList.get("img_url", i) +"' /></div></a>";
