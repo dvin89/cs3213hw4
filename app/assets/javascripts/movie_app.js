@@ -30,6 +30,7 @@ $(document).ready(function(){
 		setup: function() {
 			this.event = new Barebone.Event();
 			this.event.on("change_page", this.change_page, this);
+			this.showIndex();
 		},
 
 		change_page: function(model, options) {
@@ -48,10 +49,5 @@ $(document).ready(function(){
 	//code here
 	var myViewController = new ViewController();
 	myViewController.setup();
-
-
-
-
-
 
 });
