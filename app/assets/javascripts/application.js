@@ -14,7 +14,7 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require underscore
-//= require barebone
+//= require Barebone
 //= require movie_app
 //= require jquery.form.min
 //= require_tree ../templates
