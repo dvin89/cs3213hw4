@@ -29,8 +29,8 @@ $(document).ready(function(){
 	var EditMovieView = Barebone.View.extend({
 
 		setup: function() {
-			this.registerDomEvents();
 			this.render();
+			this.registerDomEvents();			
 		},
 
 		events: {
