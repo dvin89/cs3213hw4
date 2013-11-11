@@ -134,7 +134,6 @@ $(document).ready(function(){
 		updateMovie: function() {
 			this.movieToEdit.event.on("change", this.goToUserMovies, this);
 			this.movieToEdit.save(document.getElementById("updateMovieForm"), {"access_token": gon.token});
-			this.event.trigger("change_page", null, {page: "userMovies"});
 		},
 
 		goToUserMovies: function() {
