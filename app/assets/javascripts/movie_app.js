@@ -295,7 +295,28 @@ $(document).ready(function(){
 			this.render(options.movieID);
 			this.registerDomEvents();
 		},
+		events : {
+			"click .del" : "deleteReview",
+		},
 
+		deleteReview: function (e) {
+    			var movie_review_id = $(e.target)[0].id.split("_");
+			var dr = new NewReview();
+         		dr.url= "http://cs3213.herokuapp.com/movies/" + movie_review_id[0] + "/reviews/" + movie_review_id[1] + ".json";
+        		dr.destroy();
+
+    		},
+		getUserName : function(userEmail) {
+    			var username = "";
+    			for(var i=0; i<userEmail.length; i++) {
+        			if(userEmail[i] == "@")
+         	 			return username;
+        			else 
+          				username += userEmail[i];        
+    				}
+
+    			return "";
+  		},	
 		render: function(id){
 			var nr = new NewReview(id);
 			this.nr.fetch();
@@ -307,11 +328,16 @@ $(document).ready(function(){
 				renderString+= "user:" + this.nr.get("user", i)["username"]+"</u></b></a><br /><br />";
                             	renderString += "comment: " + this.nr.get("comment",i) + "<br>"; 
 				renderString += "score: " + this.nr.get("score",i) + "<br>";
-    				renderString += "updated at: "+ this.nr.get("updated_at",i)
-                            this.$el().append(renderString);
+    				renderString += "updated at: "+ this.nr.get("updated_at",i)                
+			
                         }
-			}
-		});
+			if(this.nr.get("user")["username"] == this.getUserName(gon.user_email)) {
+      				renderString += "<br /><a class='del' id='" + this.nr.get("movie_id") + "_" + this.nr.id + "' href='javascript: void(0);'>Delete</a></p></div>";
+ 			}
+
+			this.$el().append(renderString);
+		}
+	});
 	
 	var ReviewViewForm = Barebone.View.extend({
 		setup: function(options){
@@ -324,13 +350,13 @@ $(document).ready(function(){
 
 		saveReview: function() {
 			var myNewReview = new NewReview();
-            myNewReview.save(document.getElementById("createReviewForm"));
+            myNewReview.save(document.getElementById("createReviewForm"),{"access_token": gon.token});
 			myNewReview.event.on("change", this.refreshReviews, this);
 		},
 		refreshReviews: function(){
                         //Is there need to refresh reviews?
                         this.event.trigger("change_page", null, {page: "index"});
-                },
+        },
 
 		render: function(){
 			this.$el().html("");
