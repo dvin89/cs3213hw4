@@ -9,7 +9,8 @@ $(document).ready(function(){
 	});
 
 	var IndexView = Barebone.View.extend({
-		setup: function(){
+		setup: function(options){
+			this.event = options.event;
 			this.el = "pageBody";
 			this.myMovieList = new MovieList();
 			this.myMovieList.event.on("change", this.render, this);
@@ -27,7 +28,8 @@ $(document).ready(function(){
 
 	var EditMovieView = Barebone.View.extend({
 
-		setup: function() {
+		setup: function(options) {
+			this.event = options.event;
 			this.el = "pageBody";
 			console.log("Edit Movie Setup");
 			this.render();
@@ -78,7 +80,7 @@ $(document).ready(function(){
 		//Shows the index page
 		showIndex: function() {
 			this.current_view = new IndexView();
-			this.current_view.setup();
+			this.current_view.setup({event: this.event});
 		},
 
 		//Shows all User Movies
@@ -95,7 +97,7 @@ $(document).ready(function(){
 		showEditMovie: function() {
 			console.log("Edit Movie");
 			this.current_view = new EditMovieView();
-			this.current_view.setup();
+			this.current_view.setup({event: this.event});
 		},
 
 		//Shows the Movie's details and its reviews
