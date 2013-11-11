@@ -51,9 +51,9 @@ $(document).ready(function(){
 		baseUrl: "http://cs3213.herokuapp.com/movies.json?page=",
 		page: 1,
 		url: "http://cs3213.herokuapp.com/movies.json?page=1",
-		changeUrl: function(i){page = i; this.url=baseUrl+page;}
+		changeUrl: function(i){this.page = i; this.url=this.baseUrl+this.page;}
 	});
-	
+
 
 	//Views
 	var CreateMovieView = Barebone.View.extend({
@@ -94,24 +94,139 @@ $(document).ready(function(){
 	
 	});
 
+	
 	var IndexView = Barebone.View.extend({
-		setup: function(options){
-			this.event = options.event;
+		setup: function(){
 			this.el = "pageBody";
 			this.myMovieList = new MovieList();
-			this.myMovieList.event.on("change", this.render, this);
+			this.myMovieList.event.on("change", this.show, this);
 			this.myMovieList.fetch();
 		},
 	
-		render: function(){			
+		render: function(){
 			this.$el().html("");
+			var renderstring="";
+			renderstring+="<center><h1> MOAI Movie App</h1>";
+			renderstring+="<button class='btn btn-primary' id='Previous' type='button'>Previous</button>";
+			renderstring+="<button class='btn btn-primary' id='Create' type='button'>Cteate</button>";
+			renderstring+="<button class='btn btn-primary' id='Next' type='button'>Next</button>";
+
+			var j=0;
+			
+			renderstring+="<center><table width=75% cellspacing=0 cellpadding=2 border=1 bordercolor=#CCCCCC ><tbody><tr>";
+
 			for(var i=0; i<this.myMovieList.attributes.length; i++){
-				var renderString = "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleLink' href='javascript: void(0);'><b><u>"+this.myMovieList.get("title", i)+"</u></b></a><br /><br />";
-    			renderString += "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleImg' href='javascript: void(0);'><div><img src='" + this.myMovieList.get("img_url", i) +"' /></div></a>";
-    			this.$el().append(renderString);
+				if(j==5) {
+					renderstring+="</tr><tr>";
+					j=0;
+				}
+				j++;
+				renderstring+="<td width=20%><center>";
+				renderstring+="<a title="+this.myMovieList.get("id",i)+" id='showIdv' >";
+				renderstring+=this.myMovieList.get("title", i);
+				renderstring+="</a>";
+				renderstring+="<br><img src="+this.myMovieList.get("img_url", i)+">";
+				renderstring+="<br>Rating : "+parseFloat(this.myMovieList.get("avg_score",i)).toFixed(2);
+				renderstring+="</td>";
+			 
 			}
+			renderstring+="	</td></tr></tbody></table><center>";
+			this.$el().append(renderstring);
+			this.registerDomEvents();
 		},
+
+		events: {
+			"click #Previous" : "showPrevious",
+			"click #Next" : "showNext",
+			"click #Create ": "showCreate",
+			"click #showIdv": "showMovie",
+		},
+
+		showNext:function(){
+			this.myMovieList.changeUrl(this.myMovieList.page+1);
+			this.myMovieList.fetch();
+			console.log(this.myMovieList.page);
+			console.log(this.myMovieList.attributes);
+		},
+
+		showPrevious:function(){
+			if(this.myMovieList.page==1) return;
+						console.log(this.myMovieList.page);
+			this.myMovieList.changeUrl(this.myMovieList.page-1);
+			this.myMovieList.fetch();
+
+		},
+
+		show: function(){
+			if(this.myMovieList.attributes.length==0) {
+				this.myMovieList.changeUrl(this.myMovieList.page-1);
+				console.log(this.myMovieList.attributes);
+				return;
+			}
+			else this.render();
+
+
+		},
+		showMovie: function(){
+
+				console.log("show");
+
+
+		},
+		showCreate: function(){
+				showCreateMovies();
+
+
+		}
+
 	});
+
+	var IdvMovie=Barebone.Model.extend({
+			url : 'http://cs3213.herokuapp.com/movies/'+id+'.json',
+			initialize: function() {
+			}
+		});
+
+		var IdvMovieView = Barebone.View.extend({
+			movieID: "0",
+			movieToEdit: {},
+
+			setup: function(){
+				this.el = "pageBody";
+				this.myMovieList = new MovieList();
+				this.myMovieList.url="http://cs3213.herokuapp.com/movies/"+movieID+".json";
+				this.myMovieList.event.on("change", this.show, this);
+				this.myMovieList.fetch();
+			},
+		},
+		
+		render:function(){
+
+			this.$el().html("");
+			var renderstring="";
+			renderstring+="<center>";
+			renderstring+="<table width=30% cellpadding=5 border=1 cellspacing=0 bordercolor=#CCCCCC>";
+			renderstring+="<tr><td colspan=2><center><b>"+this.myMovieList.get("title",0)+"</b></center></b></td></tr>";
+			renderstring+="<tr><td rowspan=4><img src="+this.myMovieList.get("img_url", i)+"></td>";
+			renderstring+="<td><b>Rating : "+parseFloat(this.myMovieList.get("avg_score",i)).toFixed(2)+"</td></tr>";
+			renderstring+="<tr><td><b>Updated at: </b>"+this.myMovieList.get("item.updated_at ",0)+"</td></tr>";
+			renderstring+="<tr><td><b>Uploaded by: </b>"+this.myMovieList.get("item.user.username",0)+"</td></tr>";
+			renderstring+="<tr><td valign=top><b>Summary: </b>"+this.myMovieList.get("summary",0)+"</td></tr>";
+			renderstring+="</table>";
+			renderstring+="<br><input type='button' id='back' value='Back' >";
+			renderstring+="</center>";
+			
+			this.$el().append(renderstring);
+			this.registerDomEvents();
+			},
+
+
+		events: {
+			"click #back" : "showIndex",
+		},
+
+	});
+
 
 	var EditMovieView = Barebone.View.extend({
 		movieID: "0",
@@ -402,6 +517,7 @@ $(document).ready(function(){
 		//Shows the index page
 		showIndex: function() {
 			this.current_view = new IndexView();
+			console.log("showIndex");
 			this.current_view.setup({event: this.event});
 		},
 
@@ -425,7 +541,8 @@ $(document).ready(function(){
 
 		//Shows the Movie's details and its reviews
 		showMovieDetail: function() {
-			
+			this.current_view = new IdvMovieView();
+			this.current_view.setup({event: this.event, movieID: id});
 		},
 	});
 

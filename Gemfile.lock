@@ -79,6 +79,7 @@ GEM
       multi_json (~> 1.0)
       multi_xml (~> 0.5)
       rack (~> 1.2)
+    pg (0.15.1)
     polyglot (0.3.3)
     rack (1.5.2)
     rack-test (0.6.2)
@@ -146,6 +147,7 @@ DEPENDENCIES
   jbuilder (= 1.0.2)
   jquery-rails (= 3.0.4)
   oauth2
+  pg (= 0.15.1)
   rails (= 4.0.0)
   rails_12factor (= 0.0.2)
   sass-rails (= 4.0.0)
