@@ -29,6 +29,7 @@ $(document).ready(function(){
 	var EditMovieView = Barebone.View.extend({
 
 		setup: function() {
+			console.log("Edit Movie Setup");
 			this.render();
 			this.registerDomEvents();			
 		},
@@ -92,6 +93,7 @@ $(document).ready(function(){
 
 		//Show the form to update the Movie
 		showEditMovie: function() {
+			console.log("Edit Movie");
 			this.current_view = new EditMovieView();
 			this.current_view.setup();
 		},
