@@ -276,7 +276,77 @@ $(document).ready(function(){
 		},
 
 	});
+	var NewReview = Barebone.Model.extend({
+		baseUrl: function(){
+			return this.instanceUrl;
+		},
 
+		initialize: function(id){
+			this.instanceUrl = "http://cs3213.herokuapp.com/movies/" + id["id"] + "/reviews.json";
+		} 
+	});
+	
+	//display reviews
+	var ReviewViewClass = Barebone.View.extend({
+
+		setup: function(options){
+			this.event = options.event;
+			this.el = "pageBody";
+			this.render(options.movieID);
+			this.registerDomEvents();
+		},
+
+		render: function(id){
+			var nr = new NewReview(id);
+			this.nr.fetch();
+
+			this.$el().html("");
+			for(var i=0; i<this.nr.attributes.length; i++)
+			{
+                                var renderString = "<a id='" + this.nr.get("id", i) + "' class='Review'><p>";
+				renderString+= "user:" + this.nr.get("user", i)["username"]+"</u></b></a><br /><br />";
+                            	renderString += "comment: " + this.nr.get("comment",i) + "<br>"; 
+				renderString += "score: " + this.nr.get("score",i) + "<br>";
+    				renderString += "updated at: "+ this.nr.get("updated_at",i)
+                            this.$el().append(renderString);
+                        }
+			}
+		});
+	
+	var ReviewViewForm = Barebone.View.extend({
+		setup: function(options){
+			this.event = options.event;
+			this.el = "pageBody";
+		},
+		events: {
+                        "click #save" : "saveReview",                        
+        },
+
+		saveReview: function() {
+			var myNewReview = new NewReview();
+            myNewReview.save(document.getElementById("createReviewForm"));
+			myNewReview.event.on("change", this.refreshReviews, this);
+		},
+		refreshReviews: function(){
+                        //Is there need to refresh reviews?
+                        this.event.trigger("change_page", null, {page: "index"});
+                },
+
+		render: function(){
+			this.$el().html("");
+			var renderString = "<div style='margin-left: 20px;' id='reviewForm'><form id='createReviewForm' name='review' method='POST'>";
+            renderString += "<table><tr>";
+            renderString += "<td colspan=2><h1>Create new review</h1></td></tr>";
+            renderString += "<tr><td>Score: </td><td><input type='text' name='movie[title]' id='score'></td></tr>";
+            renderString += "<tr><td>Comment: </td><td>  <textarea id ='comment' rows=3 cols=50></textarea></td></tr>";             
+            renderString += "<tr><td colpsan=2  style='text-align: center;'><button class='btn btn-primary' id='save' type='button'>Save</button></td></tr></table></form></div>";
+       
+            this.$el().append(renderString);
+            this.registerDomEvents();
+		}
+		
+	});
+	
 	var ViewController = Barebone.View.extend({
 
 		setup: function() {
