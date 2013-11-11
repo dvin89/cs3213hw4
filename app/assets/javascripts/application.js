@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-1.10.2.min
 //= require turbolinks
 //= require underscore
 //= require Barebone
