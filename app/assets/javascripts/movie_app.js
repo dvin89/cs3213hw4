@@ -78,11 +78,13 @@ $(document).ready(function(){
 	});
 
 	var EditMovieView = Barebone.View.extend({
+		movieID: "0",
 
 		setup: function(options) {
 			this.event = options.event;
-			this.el = "pageBody";			
-			this.render(options.movieID);
+			this.el = "pageBody";
+			this.movieID = options.movieID;			
+			this.render(this.movieID);
 			this.registerDomEvents();			
 		},
 
