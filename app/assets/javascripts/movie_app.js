@@ -129,7 +129,7 @@ $(document).ready(function(){
 	var UserMovies = Barebone.Model.extend({
 		this.userMovies : Array(), 
 
-		//takes in MovieList found in movie.app.js
+		//uses MovieList found in movie.app.js
 		initialize : function() {
 			this.myMovieList = new MovieList();
 			this.myMovieList.fetch();
@@ -142,6 +142,19 @@ $(document).ready(function(){
 					userMovies.push(myMovieList[i]);
 			};
 		},
+
+		getUserName : function(userEmail) {
+		    var username = "";
+
+		    for(var i=0; i<userEmail.length; i++) {
+		        if(userEmail[i] == "@")
+		          return username;
+		        else 
+		          username += userEmail[i];        
+		    }
+
+		    return "";
+		 },
 	});
 
 	var UserMoviesView = Barebone.View.extend({
