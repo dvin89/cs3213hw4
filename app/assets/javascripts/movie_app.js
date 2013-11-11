@@ -34,15 +34,37 @@ $(document).ready(function(){
 		},
 
 		change_page: function(model, options) {
-			if(options.page == "index") {
-				this.show_page_one();
-			}
+			if(options.page == "index") 
+				this.showIndex();
+			
+			if(options.page == "userMovies")
+				this.showUserMovies();
+
+			if(options.page == "createMovies")
+				this.showCreateMovies();
+
+			if(options.page == "updateMovie")
+				this.showUpdateMovie();
+
 
 		},
 
 		showIndex: function() {
 			this.current_view = new IndexView();
 			this.current_view.setup();
+			this.event.trigger("change_page", null, {page: "userMovies"});
+		},
+
+		showUserMovies: function() {
+			console.log("User Movies are shown here");
+		},
+
+		showCreateMovies: function() {
+
+		},
+
+		showUpdateMovie: function() {
+
 		},
 	});
 
