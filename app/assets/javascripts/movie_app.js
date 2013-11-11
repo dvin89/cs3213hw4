@@ -198,14 +198,14 @@ $(document).ready(function(){
 		},
 
 		editMovie : function() {		
-			this.event.trigger("change_page", null, {page: "editMovie"});
+			this.event.trigger("change_page", null, {page: "editMovie", id: document.getElementById('hiddenVal')});
 		},
 
 		deleteMovie : function() {	
 			var userResponse = confirm("Are you sure you want to delete this movie?");	
 
 			if(userResponse)	
-				this.event.trigger("change_page", null, {page: "userMovies"});
+				this.event.trigger("change_page", null, {page: "deleteMovie", id: document.getElementById('hiddenVal')});
 			else 
 				return;
 		},
