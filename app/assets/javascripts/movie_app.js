@@ -115,31 +115,34 @@ $(document).ready(function(){
 
 	var EditMovieView = Barebone.View.extend({
 		movieID: "0",
+		movieToEdit: {},
 
 		setup: function(options) {
 			this.event = options.event;
 			this.el = "pageBody";
-			this.movieID = options.movieID;			
-			this.render(this.movieID);
+			this.movieID = options.movieID;	
+			this.movieToEdit = new MovieToEdit(this.movieID);		
+			this.render();
 			this.registerDomEvents();			
 		},
 
 		events: {
 			"click #updateMovieBtn" : "updateMovie",
-			"click #cancelUpdateBtn" : "cancelUpdate"
+			"click #cancelUpdateBtn" : "goToUserMovies"
 		},		
 
 		updateMovie: function() {
+			this.movieToEdit.event.on("change", this.goToUserMovies, this);
+			this.movieToEdit.save(document.getElementById("updateMovieForm"), {"access_token": gon.token});
 			this.event.trigger("change_page", null, {page: "userMovies"});
 		},
 
-		cancelUpdate: function() {
+		goToUserMovies: function() {
 			this.event.trigger("change_page", null, {page: "userMovies"});
 		},
 
-		render: function(id) {
-			var movieToEdit = new MovieToEdit(id);
-			movieToEdit.fetch();
+		render: function() {			
+			this.movieToEdit.fetch();
 
 			this.$el().html("");
 			var renderString = "<div id='movieForm' style='margin-left:10px;'>";			
@@ -159,8 +162,8 @@ $(document).ready(function(){
 			renderString += "</td></tr></table></form></div>";
 
 			this.$el().append(renderString);
-			$("#movie_title").val(movieToEdit.get('title'));
-			$("#summary").val(movieToEdit.get('summary'));
+			$("#movie_title").val(this.movieToEdit.get('title'));
+			$("#summary").val(this.movieToEdit.get('summary'));
 		},
 	});	
 	
@@ -251,7 +254,7 @@ $(document).ready(function(){
 		},
 
 		editMovie : function() {		
-			this.event.trigger("change_page", null, {page: "editMovie", id: document.getElementById('hiddenVal')});
+			this.event.trigger("change_page", null, {page: "editMovie", id: document.getElementById('hiddenVal').value});
 		},
 
 		deleteMovie : function() {	
@@ -261,7 +264,7 @@ $(document).ready(function(){
 				for (var i=0; i<this.myMovies.userMovies.length; i++) {
 					var aModel = this.myMovies.userMovies[i];
 
-					if(aModel.get('id') == document.getElementById('hiddenVal')) {
+					if(aModel.get('id') == document.getElementById('hiddenVal').value) {
 						aModel.destroy();
 						break;
 					}
@@ -334,9 +337,5 @@ $(document).ready(function(){
 	//code here
 	var myViewController = new ViewController();
 	myViewController.setup();
-	myViewController.showEditMovie();
-	
-	
-	
 
 });
