@@ -25,11 +25,29 @@ $(document).ready(function(){
 		},
 	});
 
+	var ViewController = Barebone.View.extend({
 
+		setup: function() {
+			this.event = new Barebone.Event();
+			this.event.on("change_page", this.change_page, this);
+		},
+
+		change_page: function(model, options) {
+			if(options.page == "index") {
+				this.show_page_one();
+			}
+
+		},
+
+		showIndex: function() {
+			this.current_view = new IndexView();
+			this.current_view.setup();
+		},
+	});
 
 	//code here
-	var myIndexView = new IndexView();
-	myIndexView.setup();
+	var myViewController = new ViewController();
+	myViewController.setup();
 
 
 
