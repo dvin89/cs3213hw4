@@ -15,6 +15,18 @@ var UserMovies = Barebone.Model.extend({
 				userMovies.push(myMovieList[i]);
 		};
 	},
+	getUserName : function(userEmail) {
+	    var username = "";
+
+	    for(var i=0; i<userEmail.length; i++) {
+	        if(userEmail[i] == "@")
+	          return username;
+	        else 
+	          username += userEmail[i];        
+	    }
+
+	    return "";
+	}
 });
 
 var UserMoviesView = Barebone.View.extend({
@@ -71,14 +83,14 @@ var UserMoviesView = Barebone.View.extend({
 	},
 
 	editMovie : function() {		
-		this.event.trigger("change_page", null, {page: "editMovie"});
+		this.event.trigger("change_page", null, {page: "editMovie", id: document.getElementById('hiddenVal')});
 	},
 
 	deleteMovie : function() {	
 		var userResponse = confirm("Are you sure you want to delete this movie?");	
 
 		if(userResponse)	
-			this.event.trigger("change_page", null, {page: "userMovies"});
+			this.event.trigger("change_page", null, {page: "deleteMovie", id: document.getElementById('hiddenVal')});
 		else 
 			return;
 	},
