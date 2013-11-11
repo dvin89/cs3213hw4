@@ -4,6 +4,14 @@ $(document).ready(function(){
 	var NewMovie = Barebone.Model.extend({
     url: "http://cs3213.herokuapp.com/movies.json",
   });
+
+	var MovieToEdit = Barebone.Model.extend({
+		baseUrl: "http://cs3213.herokuapp.com/movies/",
+
+		initialize: function(id) {
+			this.url = baseUrl + id + ".json";
+		},
+	});
 	
 	var MovieList = Barebone.Model.extend({
 		baseUrl: "http://cs3213.herokuapp.com/movies.json?page=",
@@ -22,15 +30,15 @@ $(document).ready(function(){
 		render: function(){
 			this.$el().html("");
 			var renderString = "<div style='margin-left: 20px;' id='movieForm'><form id='createMovieForm' name='movie' method='POST'>";
-    	renderString += "<table><tr>";
-   		renderString += "<td colspan=2><h1>Create new movie</h1></td></tr>";
-    	renderString += "<tr><td>Title: </td><td><input type='text' name='movie[title]' id='movie_title'></td></tr>";
-    	renderString += "<tr><td>Summary: </td><td> <input type='text' name='movie[summary]' id='summary'></td></tr>";
-    	renderString += "<tr><td>Image: </td><td> <input type='file' name='movie[img]' id='movie_img'></td></tr>";
-    	renderString += "<tr><td colpsan=2  style='text-align: center;'><button class='btn btn-primary' id='Create' type='button'>Create</button></td></tr></table></form></div>";
-    
-    	this.$el().append(renderString);
-    	this.registerDomEvents();
+	    	renderString += "<table><tr>";
+	   		renderString += "<td colspan=2><h1>Create new movie</h1></td></tr>";
+	    	renderString += "<tr><td>Title: </td><td><input type='text' name='movie[title]' id='movie_title'></td></tr>";
+	    	renderString += "<tr><td>Summary: </td><td> <input type='text' name='movie[summary]' id='summary'></td></tr>";
+	    	renderString += "<tr><td>Image: </td><td> <input type='file' name='movie[img]' id='movie_img'></td></tr>";
+	    	renderString += "<tr><td colpsan=2  style='text-align: center;'><button class='btn btn-primary' id='Create' type='button'>Create</button></td></tr></table></form></div>";
+	    
+	    	this.$el().append(renderString);
+	    	this.registerDomEvents();
 		},
 		
 		events: {
@@ -74,7 +82,7 @@ $(document).ready(function(){
 		setup: function(options) {
 			this.event = options.event;
 			this.el = "pageBody";			
-			this.render();
+			this.render(options.movieID);
 			this.registerDomEvents();			
 		},
 
@@ -91,7 +99,10 @@ $(document).ready(function(){
 			this.event.trigger("change_page", null, {page: "userMovies"});
 		},
 
-		render: function() {
+		render: function(id) {
+			var movieToEdit = new MovieToEdit(id);
+			movieToEdit.fetch();
+
 			this.$el().html("");
 			var renderString = "<div id='movieForm' style='margin-left:10px;'>";			
 			renderString += "<form id='updateMovieForm' name='movie' method='POST'>";
@@ -110,6 +121,8 @@ $(document).ready(function(){
 			renderString += "</td></tr></table></form></div>";
 
 			this.$el().append(renderString);
+			$("#movie_title").val(movieToEdit.get('title'));
+			$("#summary").val(movieToEdit.get('summary'));
 		},
 	});
 
@@ -132,7 +145,7 @@ $(document).ready(function(){
 				this.showCreateMovies();
 
 			if(options.page == "editMovie")
-				this.showEditMovie();
+				this.showEditMovie(options.id);
 
 			if(options.page == "movieDetail")
 				this.showMovieDetail();
@@ -157,9 +170,9 @@ $(document).ready(function(){
 		},
 
 		//Show the form to update the Movie
-		showEditMovie: function() {			
+		showEditMovie: function(id) {			
 			this.current_view = new EditMovieView();
-			this.current_view.setup({event: this.event});
+			this.current_view.setup({event: this.event, movieID: id});
 		},
 
 		//Shows the Movie's details and its reviews
