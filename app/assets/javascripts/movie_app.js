@@ -8,7 +8,7 @@ window.MovieApp = {
   initialize: function(){
     
     window.router = new MovieApp.Routers.MainRouter();
-    Barebone.history.start();
+    Backbone.history.start();
   }
 
 }
