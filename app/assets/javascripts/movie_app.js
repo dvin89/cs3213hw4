@@ -105,5 +105,6 @@ $(document).ready(function(){
 	//code here
 	var myViewController = new ViewController();
 	myViewController.setup();
+	myViewController.showEditMovie();
 
 });
