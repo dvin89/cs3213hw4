@@ -13,8 +13,9 @@ $(document).ready(function(){
 	});
 	
 	var CreateMovieView = Barebone.View.extend({
-		setup: function(){
+		setup: function(options){
 			this.el = "pageBody";
+			this.event = option.event;
 			this.render();
 		},	
 		
@@ -44,6 +45,7 @@ $(document).ready(function(){
 		
 		hookToMovieDetail: function(){
 			//this is supposed to be a function to link to a page showing the newly created movie details
+			this.event.trigger("change_page", null, {page: "index"});
 		}
 	
 	});
@@ -58,6 +60,7 @@ $(document).ready(function(){
 		},
 	
 		render: function(){			
+			this.$el().html("");
 			for(var i=0; i<this.myMovieList.attributes.length; i++){
 				var renderString = "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleLink' href='javascript: void(0);'><b><u>"+this.myMovieList.get("title", i)+"</u></b></a><br /><br />";
     			renderString += "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleImg' href='javascript: void(0);'><div><img src='" + this.myMovieList.get("img_url", i) +"' /></div></a>";
@@ -90,10 +93,8 @@ $(document).ready(function(){
 
 		render: function() {
 			this.$el().html("");
-			var renderString = "<button id='updateMovieBtn'>Update Movie</button>";
-
-			// <div id='movieForm' style='margin-left:10px;'>
-			renderString += "<form id='movieForm' name='movie' method='POST'>";
+			var renderString = "<div id='movieForm' style='margin-left:10px;'>";			
+			renderString += "<form id='updateMovieForm' name='movie' method='POST'>";
 			renderString += "<h1 style='font-weight: bold;'>Edit Movie</h1>";
 			renderString += "<table>";			
 			renderString += "<tr><td><label style='font-size: large;'><b>Title:</b></label></td></tr>";			
@@ -106,8 +107,8 @@ $(document).ready(function(){
 			renderString += "<tr><td>";		
 			renderString += "<input type='button' class='btn btn-primary' id='updateMovieBtn' value='Update Movie' />&nbsp;
 								<input type='button' class='btn' id='cancelUpdateBtn' value='Cancel' />";
-			renderString += "</td></tr></table></form>";
-			// </div>
+			renderString += "</td></tr></table></form></div>";
+
 			this.$el().append(renderString);
 		},
 	});
@@ -151,7 +152,8 @@ $(document).ready(function(){
 
 		//Shows the form to create a new Movie
 		showCreateMovies: function() {
-
+			this.current_view = new CreateMovieView();
+			this.current_view.setup({event: this.event});
 		},
 
 		//Show the form to update the Movie
