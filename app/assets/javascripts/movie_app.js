@@ -1,20 +1,39 @@
-
-window.MovieApp = {
-  Models: {},
-  Collections: {},
-  Views: {},
-  Routers: {},
-
-  initialize: function(){
-    
-    window.router = new MovieApp.Routers.MainRouter();
-    Backbone.history.start();
-  }
-
-}
-
 $(document).ready(function(){
-  //initialize our movie app once the page is ready
-  MovieApp.initialize();
-});
 
+	//classes declaration
+	var MovieList = Barebone.Model.extend({
+		baseUrl: "http://cs3213.herokuapp.com/movies.json?page=",
+		page: 1,
+		url: "http://cs3213.herokuapp.com/movies.json?page=1",
+		changeUrl: function(i){page = i; this.url=baseUrl+page;}
+	});
+	var IndexView = Barebone.View.extend({
+		setup: function(){
+			this.el = "pageBody";
+			this.myMovieList = new MovieList();
+			this.myMovieList.event.on("change", this.render, this);
+			this.myMovieList.fetch();
+		},
+	
+		render: function(){
+			this.$el().html("");
+			for(var i=0; i<this.myMovieList.attributes.length; i++){
+				var renderString = "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleLink' href='javascript: void(0);'><b><u>"+this.myMovieList.get("title", i)+"</u></b></a><br /><br />";
+    renderString += "<a id='" + this.myMovieList.get("id", i) + "' class='MovieSimpleImg' href='javascript: void(0);'><div><img src='" + this.myMovieList.get("img_url", i) +"' /></div></a>";
+    		this.$el().append(renderString);
+			}
+		},
+	});
+
+
+
+	//code here
+	var myIndexView = new IndexView();
+	myIndexView.setup();
+
+
+
+
+
+
+});
