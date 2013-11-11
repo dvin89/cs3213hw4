@@ -30,23 +30,44 @@ $(document).ready(function(){
 
 		setup: function(options) {
 			this.event = options.event;
-			this.el = "pageBody";
-			console.log("Edit Movie Setup");
+			this.el = "pageBody";			
 			this.render();
 			this.registerDomEvents();			
 		},
 
 		events: {
-			"click #updateMovieBtn" : "updateMovie"
+			"click #updateMovieBtn" : "updateMovie",
+			"click #cancelUpdateBtn" : "cancelUpdate"
 		},		
 
 		updateMovie: function() {
 			this.event.trigger("change_page", null, {page: "userMovies"});
 		},
 
+		cancelUpdate: function() {
+			this.event.trigger("change_page", null, {page: "userMovies"});
+		},
+
 		render: function() {
 			this.$el().html("");
 			var renderString = "<button id='updateMovieBtn'>Update Movie</button>";
+
+			// <div id='movieForm' style='margin-left:10px;'>
+			renderString += "<form id='movieForm' name='movie' method='POST'>";
+			renderString += "<h1 style='font-weight: bold;'>Edit Movie</h1>";
+			renderString += "<table>";			
+			renderString += "<tr><td><label style='font-size: large;'><b>Title:</b></label></td></tr>";			
+			renderString += "<tr><td><input type='text' name='movie[title]' id='movie_title'></td></tr>";
+			renderString += "<tr><td><label style='font-size: large;'><b>Summary:</b></label></td></tr>";
+			renderString += "<tr><td><textarea maxlength='255' name='movie[summary]' id='summary' rows='10' cols='100'></textarea></td></tr>";
+			renderString += "<tr><td><label style='font-size: large;'><b>Image:</b></label></td></tr>"
+			renderString += "<tr><td><input type='file' name='movie[img]' id='movie_img'></td></tr>";
+			renderString += "<tr height='20px'><td></td></tr>";
+			renderString += "<tr><td>";		
+			renderString += "<input type='button' class='btn btn-primary' id='updateMovieBtn' value='Update Movie' />&nbsp;
+								<input type='button' class='btn' id='cancelUpdateBtn' value='Cancel' />";
+			renderString += "</td></tr></table></form>";
+			// </div>
 			this.$el().append(renderString);
 		},
 	});
@@ -94,8 +115,7 @@ $(document).ready(function(){
 		},
 
 		//Show the form to update the Movie
-		showEditMovie: function() {
-			console.log("Edit Movie");
+		showEditMovie: function() {			
 			this.current_view = new EditMovieView();
 			this.current_view.setup({event: this.event});
 		},
