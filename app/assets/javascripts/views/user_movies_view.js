@@ -1,9 +1,25 @@
-MovieApp.Views.UserMoviesView = Backbone.View.extend({
+//class declarations
+var UserMovies = Barebone.Model.extend({
+	var userMovies : Array(), 
+
+	//takes in MovieList found in movie.app.js
+	initialize : function(myMovieList)	{
+		var username = this.getUserName(gon.user_email);
+
+		for (var i=0; i<myMovieList.length; i++) {
+			var movieModel = new Barebone.Model(myMovieList[i].get("user"));
+			if(movieModel.get("username") == username)
+				userMovies.push(myMovieList[i]);
+		};
+	},
+});
+
+var UserMoviesView = Barebone.View.extend({
 	el: '#pageBody',	
 
 	initialize : function(userMovies) {
-		this.collection = userMovies;
-		this.render();			
+		this.myMovies = userMovies;
+		this.render();
 	},
 
 	render : function() {
@@ -11,7 +27,8 @@ MovieApp.Views.UserMoviesView = Backbone.View.extend({
 		var movieRenderString = "<table cellpadding='10'>";
 		var count = 0;
 
-		this.collection.each(function(movieModel) {
+		for (var i=0; i<this.myMovies.userMovies.length; i++) {
+			var movieModel = this.myMovies.userMovies[i];			
 			var userMovieView = new MovieApp.Views.UserMovieView(movieModel);
 
 			if(count == 0)
@@ -27,14 +44,14 @@ MovieApp.Views.UserMoviesView = Backbone.View.extend({
 				movieRenderString += "</tr>";
 			} 
 			
-		});
+		};
 
 		movieRenderString += "</table>";
 		movieRenderString += "<label id='hiddenVal' style='visibility: hidden;'></label>";
 
 		var myNavBarView = new MovieApp.Views.NavBarView();
-    	$(this.el).html(myNavBarView.render().el);
-    	
+		$(this.el).html(myNavBarView.render().el);
+		
 		$(current.el).append(movieRenderString);
 
 		return this;
@@ -59,3 +76,11 @@ MovieApp.Views.UserMoviesView = Backbone.View.extend({
 	},
 
 });
+
+//code here
+var userMovies = new UserMovies();
+var myMovieList = myIndexView.myMovieList; //myIndexView from movie_app.js
+userMovies.initialize(myMovieList);
+
+var userMovieView = new UserMoviesView();
+userMoviesView.initialize(userMovies);
