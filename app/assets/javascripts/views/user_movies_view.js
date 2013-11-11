@@ -1,9 +1,12 @@
 //class declarations
 var UserMovies = Barebone.Model.extend({
-	var userMovies : Array(), 
+	this.userMovies : Array(), 
 
 	//takes in MovieList found in movie.app.js
-	initialize : function(myMovieList)	{
+	initialize : function() {
+		this.myMovieList = new MovieList();
+		this.myMovieList.fetch();
+
 		var username = this.getUserName(gon.user_email);
 
 		for (var i=0; i<myMovieList.length; i++) {
@@ -17,7 +20,10 @@ var UserMovies = Barebone.Model.extend({
 var UserMoviesView = Barebone.View.extend({
 	el: '#pageBody',	
 
-	initialize : function(userMovies) {
+	setup : function(options) {
+		this.event = options.event;
+		var userMovies = new UserMovies();
+		userMovies.initialize();
 		this.myMovies = userMovies;
 		this.render();
 	},
@@ -54,6 +60,8 @@ var UserMoviesView = Barebone.View.extend({
 		
 		$(current.el).append(movieRenderString);
 
+		this.registerDomEvents();
+
 		return this;
 	},	
 
@@ -63,24 +71,20 @@ var UserMoviesView = Barebone.View.extend({
 	},
 
 	editMovie : function() {		
-		window.router.navigate("editMovie/" + document.getElementById('hiddenVal').innerHTML, {trigger : true});
+		this.event.trigger("change_page", null, {page: "editMovie"});
 	},
 
 	deleteMovie : function() {	
 		var userResponse = confirm("Are you sure you want to delete this movie?");	
 
 		if(userResponse)	
-			window.router.navigate("deleteMovie/" + document.getElementById('hiddenVal').innerHTML, {trigger : true});
+			this.event.trigger("change_page", null, {page: "userMovies"});
 		else 
 			return;
 	},
 
 });
 
-//code here
-var userMovies = new UserMovies();
-var myMovieList = myIndexView.myMovieList; //myIndexView from movie_app.js
-userMovies.initialize(myMovieList);
-
-var userMovieView = new UserMoviesView();
-userMoviesView.initialize(userMovies);
+//code for adding into ViewController here
+this.current_view = new UserMoviesView();
+this.current_view.setup(event: this.event);
