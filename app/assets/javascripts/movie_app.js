@@ -1,6 +1,8 @@
 $(document).ready(function(){
 
 	//classes declaration
+
+	//Models
 	var NewMovie = Barebone.Model.extend({
     url: "http://cs3213.herokuapp.com/movies.json",
   });
@@ -12,6 +14,24 @@ $(document).ready(function(){
 			this.url = baseUrl + id + ".json";
 		},
 	});
+
+	var UserMovies = Barebone.Model.extend({
+		this.userMovies : Array(), 
+
+		//takes in MovieList found in movie.app.js
+		initialize : function() {
+			this.myMovieList = new MovieList();
+			this.myMovieList.fetch();
+
+			var username = this.getUserName(gon.user_email);
+
+			for (var i=0; i<myMovieList.length; i++) {
+				var movieModel = new Barebone.Model(myMovieList[i].get("user"));
+				if(movieModel.get("username") == username)
+					userMovies.push(myMovieList[i]);
+			};
+		},
+	});
 	
 	var MovieList = Barebone.Model.extend({
 		baseUrl: "http://cs3213.herokuapp.com/movies.json?page=",
@@ -20,6 +40,8 @@ $(document).ready(function(){
 		changeUrl: function(i){page = i; this.url=baseUrl+page;}
 	});
 	
+
+	//Views
 	var CreateMovieView = Barebone.View.extend({
 		setup: function(options){
 			this.el = "pageBody";
@@ -126,24 +148,39 @@ $(document).ready(function(){
 			$("#movie_title").val(movieToEdit.get('title'));
 			$("#summary").val(movieToEdit.get('summary'));
 		},
-	});
+	});	
+	
+	var UserMovieView = Barebone.View.extend({
+		model: {};
 
-	var UserMovies = Barebone.Model.extend({
-		this.userMovies : Array(), 
+		initialize: function(movieModel) {
+			this.model = movieModel;
+		}, 
 
-		//takes in MovieList found in movie.app.js
-		initialize : function() {
-			this.myMovieList = new MovieList();
-			this.myMovieList.fetch();
+		render : function() {
+		    var avg_score = new Number(this.model.get('avg_score'));
+		    var title = this.model.get('title');
 
-			var username = this.getUserName(gon.user_email);
+		    if(title.length > 30) 
+		      title = title.substr(0,30) + " ...";
 
-			for (var i=0; i<myMovieList.length; i++) {
-				var movieModel = new Barebone.Model(myMovieList[i].get("user"));
-				if(movieModel.get("username") == username)
-					userMovies.push(myMovieList[i]);
-			};
-		},
+		    var movieRenderString = "<div><p><b style='font-size:large;'>" + title + "</b></p></div>";
+		    movieRenderString += "<div><p><b>Average Score</b>: " +  avg_score.toPrecision(4) + "&nbsp;&nbsp;" + 
+		      "<a href='javascript: void(0);'" + 
+		      "onclick=document.getElementById('hiddenVal').innerHTML='" +  this.model.get('id') + "'; " +
+		      "id='editMovie'><img width='18' height='18' " +
+		      "src='http://png-5.findicons.com/files/icons/2443/bunch_of_cool_bluish_icons/512/edit_notes.png'>" +
+		      "</img></a><a href='javascript: void(0);' " + 
+		      "onclick=document.getElementById('hiddenVal').innerHTML='" +  this.model.get('id') + "'; " + 
+		      "id='deleteMovie'><img src='http://www.pdfdu.com/images/del.png' width='18' height='18'></img>" +
+		      "</a></p></div>";
+		    movieRenderString += "<div><img src='" + this.model.get('img_url') + "'></img></div>";    
+		    
+		    $(this.el).html(movieRenderString);	
+
+		    return this;
+		  },
+
 	});
 
 	var UserMoviesView = Barebone.View.extend({
@@ -164,7 +201,7 @@ $(document).ready(function(){
 
 			for (var i=0; i<this.myMovies.userMovies.length; i++) {
 				var movieModel = this.myMovies.userMovies[i];			
-				var userMovieView = new MovieApp.Views.UserMovieView(movieModel);
+				var userMovieView = new UserMovieView(movieModel);
 
 				if(count == 0)
 					movieRenderString += "<tr>";
@@ -206,10 +243,20 @@ $(document).ready(function(){
 		deleteMovie : function() {	
 			var userResponse = confirm("Are you sure you want to delete this movie?");	
 
-			if(userResponse)	
-				this.event.trigger("change_page", null, {page: "deleteMovie", id: document.getElementById('hiddenVal')});
-			else 
+			if(userResponse) {	
+				for (var i=0; i<this.myMovies.userMovies.length; i++) {
+					var aModel = this.myMovies.userMovies[i];
+
+					if(aModel.get('id') == document.getElementById('hiddenVal')) {
+						aModel.destroy();
+						break;
+					}
+				}
+
+				this.event.trigger("change_page", null, {page: "userMovies"});
+			} else {
 				return;
+			}
 		},
 
 	});
@@ -247,8 +294,7 @@ $(document).ready(function(){
 		},
 
 		//Shows all User Movies
-		showUserMovies: function() {
-			console.log("User Movies are shown here");
+		showUserMovies: function() {			
 			this.current_view = new UserMoviesView();
 			this.current_view.setup({event: this.event});
 		},
@@ -267,7 +313,7 @@ $(document).ready(function(){
 
 		//Shows the Movie's details and its reviews
 		showMovieDetail: function() {
-
+			
 		},
 	});
 
