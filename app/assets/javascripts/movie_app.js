@@ -320,12 +320,20 @@ $(document).ready(function(){
 				
 				this.$el().append(renderstring);
 				this.registerDomEvents();
+				
+				var rev = new ReviewViewClass();
+				rev.setup(this.movieID);
 			}
 		},
 
 		events: {
 			"click #back" : "showIndex",
 		},
+		
+		showIndex: function(){
+			var myViewController = new ViewController();
+			myViewController.setup();
+		}
 
 	});
 
@@ -506,10 +514,10 @@ $(document).ready(function(){
 	//display reviews
 	var ReviewViewClass = Barebone.View.extend({
 
-		setup: function(options){
-			this.event = options.event;
+		setup: function(id){
+			//this.event = options.event;
 			this.el = "pageBody";
-			this.render(options.movieID);
+			this.render(id);
 			this.registerDomEvents();
 		},
 		events : {
@@ -536,9 +544,9 @@ $(document).ready(function(){
   		},	
 		render: function(id){
 			var nr = new NewReview(id);
-			this.nr.fetch();
+			nr.fetch();
 
-			this.$el().html("");
+			//this.$el().html("");
 			for(var i=0; i<this.nr.attributes.length; i++)
 			{
                                 var renderString = "<a id='" + this.nr.get("id", i) + "' class='Review'><p>";
